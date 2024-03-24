@@ -1,11 +1,12 @@
 package org.example;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
+import java.io.*;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.printer.YamlPrinter;
 import com.github.javaparser.printer.XmlPrinter;
 import com.github.javaparser.printer.DotPrinter;
+
 public class JavaParserExample {
 
     public static void parseProgramComprehension() {
@@ -24,20 +25,31 @@ public class JavaParserExample {
             e.printStackTrace();
         }
 
-        // Print the AST
+        // Generate files for AST in different formats
         if (cu != null) {
-            System.out.println("打印yaml格式");
-            YamlPrinter yamlPrinter = new YamlPrinter(true);
-            System.out.println(yamlPrinter.output(cu));
-            System.out.println("打印xml格式");
-            XmlPrinter xmlPrinter = new XmlPrinter(true);
-            System.out.println(xmlPrinter.output(cu));
-            System.out.println("打印dotviz格式");
-            DotPrinter dotPrinter = new DotPrinter(true);
-            System.out.println(dotPrinter.output(cu));
+            try {
+                // Save YAML representation
+                YamlPrinter yamlPrinter = new YamlPrinter(true);
+                PrintWriter yamlWriter = new PrintWriter(new File("AST.yaml"));
+                yamlWriter.print(yamlPrinter.output(cu));
+                yamlWriter.close();
+
+                // Save XML representation
+                XmlPrinter xmlPrinter = new XmlPrinter(true);
+                PrintWriter xmlWriter = new PrintWriter(new File("AST.xml"));
+                xmlWriter.print(xmlPrinter.output(cu));
+                xmlWriter.close();
+
+                // Save Dot representation
+                DotPrinter dotPrinter = new DotPrinter(true);
+                PrintWriter dotWriter = new PrintWriter(new File("AST.dot"));
+                dotWriter.print(dotPrinter.output(cu));
+                dotWriter.close();
+
+                System.out.println("AST representations saved to files.");
+            } catch (FileNotFoundException e) {
+                System.out.println("Error writing to the file: " + e.getMessage());
+            }
         }
     }
 }
-
-
-
